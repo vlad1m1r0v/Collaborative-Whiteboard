@@ -1,22 +1,24 @@
 import './App.css'
-import {Layer, Stage, Text, Rect} from "react-konva";
+import {Stage, Layer} from "react-konva";
+import {usePreventZoom, useScale} from '@/hooks';
+
 
 function App() {
+    usePreventZoom();
+
+    const { stageScale, stagePos, ...draggingProps } = useScale();
+
     return (
         <>
             <div className="grid-background">
-                <Stage width={window.innerWidth} height={window.innerHeight}>
+                <Stage draggable
+                       width={window.innerWidth}
+                       height={window.innerHeight}
+                       {...draggingProps}
+                       {...stagePos}
+                       scale={{ x: stageScale, y: stageScale }}
+                >
                     <Layer>
-                        <Text x={20} y={20} text={"Example of text"} draggable/>
-                        <Rect x={20}
-                              y={50}
-                              width={100}
-                              height={100}
-                              fill={'white'}
-                              stroke={'black'}
-                              strokeWidth={1}
-                              draggable>
-                        </Rect>
                     </Layer>
                 </Stage>
             </div>
