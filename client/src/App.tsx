@@ -1,6 +1,7 @@
 import './App.css'
 import {Stage, Layer} from "react-konva";
 import {usePreventZoom, useScale} from '@/hooks';
+import {Menu} from "@/components";
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     return (
         <>
             <div className="grid-background">
+                <Menu/>
                 <Stage draggable
                        width={window.innerWidth}
                        height={window.innerHeight}
