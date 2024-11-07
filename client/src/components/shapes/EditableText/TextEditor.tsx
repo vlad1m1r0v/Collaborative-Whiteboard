@@ -19,26 +19,26 @@ export const TextEditor = ({
 
     React.useLayoutEffect(() => {
         const textNode = textNodeRef.current;
+        if (!textNode) return;
 
         const newStyle: React.CSSProperties = {
-            width: `${textNode!.width() - textNode!.padding() * 2}px`,
-            height: `${textNode!.height() - textNode!.padding() * 2 + 10}px`,
-            fontSize: `${textNode!.fontSize()}px`,
+            width: `${textNode.width() - textNode.padding() * 2}px`,
+            fontSize: `${textNode.fontSize()}px`,
             border: 'none',
             padding: '0px',
             overflow: 'hidden',
             background: 'none',
             outline: 'none',
             resize: 'none',
-            lineHeight: textNode!.lineHeight() + 0.01,
-            fontFamily: `"${textNode!.fontFamily()}"`,
+            lineHeight: textNode.lineHeight() + 0.01,
+            fontFamily: `"${textNode.fontFamily()}"`,
             position: 'absolute',
-            top: `${textNode!.getPosition()!.y}px`,
-            left: `${textNode!.getPosition()!.x}px`,
-            transform: `rotate(${textNode?.rotation()}deg)`,
+            top: `${textNode.getAbsolutePosition().y}px`,
+            left: `${textNode.getAbsolutePosition().x}px`,
+            transform: `rotate(${textNode.rotation()}deg)`,
             transformOrigin: 'left top',
-            textAlign: textNode!.align() as React.CSSProperties['textAlign'],
-            color: textNode!.fill() as React.CSSProperties['color'],
+            textAlign: textNode.align() as React.CSSProperties['textAlign'],
+            color: textNode.fill() as React.CSSProperties['color'],
             overflowWrap: 'break-word',
             whiteSpace: 'normal',
             userSelect: 'text',
@@ -51,10 +51,7 @@ export const TextEditor = ({
     return (
         <Html>
             <textarea
-                className="polotno-input"
-                style={{
-                    ...style,
-                }}
+                style={style}
                 value={value}
                 onChange={(e) => {
                     onChange(e.target.value);

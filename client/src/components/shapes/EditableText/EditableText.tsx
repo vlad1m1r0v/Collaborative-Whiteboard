@@ -14,7 +14,6 @@ export const EditableText = React.forwardRef<Konva.Text, EditorStProps>((props, 
     const [currentText, setCurrentText] = React.useState(text);
     const textRef = React.useRef<Konva.Text>(null);
 
-    // З'єднуємо переданий `ref` з локальним `textRef`
     React.useImperativeHandle(ref, () => textRef.current!);
 
     return (
@@ -22,7 +21,7 @@ export const EditableText = React.forwardRef<Konva.Text, EditorStProps>((props, 
             <Text
                 text={currentText}
                 ref={textRef}
-                onClick={() => {
+                onDblClick={() => {
                     setEditorEnabled(true);
                 }}
                 visible={!editorEnabled}

@@ -23,7 +23,7 @@ function App() {
                            scale={{x: stageScale, y: stageScale}}
                     >
                         <Layer>
-                            <EditableText rotation={30} x={200} y={200} fontSize={24} text={"Some text can be there"}
+                            <EditableText rotation={30} x={200} y={200} fontSize={24} fill={'red'} text={"Some text can be there\n\n\n\n\nAnother text"}
                                           draggable></EditableText>
                             <Circle x={300} y={400} radius={100} fill={"green"} stroke={"black"} strokeWidth={5}
                                     draggable></Circle>
