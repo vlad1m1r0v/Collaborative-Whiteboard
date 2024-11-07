@@ -33,7 +33,7 @@ const Menu = () => {
             <Button variant={"ghost"}>
                 <img src={RedoIcon} className={"w-4 h4"} alt={"Redo"}></img>
             </Button>
-            <Button variant={"ghost"}>
+            <Button className={'bg-blue-100'} variant={"ghost"}>
                 <img src={SelectIcon} className={"w-4 h4"} alt={"Select"}></img>
             </Button>
             <Button variant={"ghost"}>
