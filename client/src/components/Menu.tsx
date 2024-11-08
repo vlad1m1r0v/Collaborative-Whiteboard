@@ -89,6 +89,7 @@ const Menu = () => {
             {
                 toolButtons.map((toolButton) => (
                     <Button
+                        key={toolButton.tool}
                         variant={"ghost"}
                         className={clsx({"bg-blue-100": tool === toolButton.tool})}
                         onClick={() => setTool(toolButton.tool)}>
