@@ -9,7 +9,7 @@ interface EditorStProps extends TextConfig {
 }
 
 export const EditableText = React.forwardRef<Konva.Text, EditorStProps>((props, ref) => {
-    const { text, ...rest } = props;
+    const {text, ...rest } = props;
     const [editorEnabled, setEditorEnabled] = React.useState(false);
     const [currentText, setCurrentText] = React.useState(text);
     const textRef = React.useRef<Konva.Text>(null);

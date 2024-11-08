@@ -1,12 +1,4 @@
-import {
-    Button,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-    Select
-} from "@/components/ui";
+import {Button, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui";
 import UndoIcon from "/icons/undo.svg";
 import RedoIcon from "/icons/redo.svg";
 import SelectIcon from "/icons/select.svg";
@@ -14,7 +6,7 @@ import GrabIcon from "/icons/grab.svg";
 import PenIcon from "/icons/pen.svg";
 import LineIcon from "/icons/line.svg";
 import ArrowIcon from "/icons/arrow.svg";
-import CircleIcon from "/icons/circle.svg";
+import EllipseIcon from "/icons/ellipse.svg";
 import TriangleIcon from "/icons/triangle.svg";
 import RectangleIcon from "/icons/rectangle.svg";
 import ThicknessIcon from "/icons/thickness.svg";
@@ -22,8 +14,69 @@ import TextIcon from "/icons/text.svg";
 import TextSizeIcon from "/icons/text-size.svg";
 import BrushIcon from "/icons/brush.svg";
 import StrokeIcon from "/icons/stroke.svg";
+import {useContext} from "react";
+import {WhiteboardContext} from "@/context";
+import {ToolType} from "@/types";
+import {clsx} from "clsx";
+
+interface ToolButtonProps {
+    icon: string;
+    tool: ToolType;
+}
+
+const toolButtons: ToolButtonProps[] = [
+    {
+        icon: SelectIcon,
+        tool: ToolType.SELECT,
+    },
+    {
+        icon: GrabIcon,
+        tool: ToolType.GRAB,
+    },
+    {
+        icon: PenIcon,
+        tool: ToolType.PEN,
+    },
+    {
+        icon: LineIcon,
+        tool: ToolType.LINE,
+    },
+    {
+        icon: ArrowIcon,
+        tool: ToolType.ARROW,
+    },
+    {
+        icon: EllipseIcon,
+        tool: ToolType.ELLIPSE
+    },
+    {
+        icon: TriangleIcon,
+        tool: ToolType.TRIANGLE,
+    },
+    {
+        icon: RectangleIcon,
+        tool: ToolType.RECTANGLE,
+    },
+    {
+        icon: TextIcon,
+        tool: ToolType.TEXT,
+    },
+];
 
 const Menu = () => {
+    const {
+        tool,
+        setTool,
+        strokeWidth,
+        setStrokeWidth,
+        fontSize,
+        setFontSize,
+        fillColor,
+        setFillColor,
+        strokeColor,
+        setStrokeColor
+    } = useContext(WhiteboardContext);
+
     return (
         <menu
             className={"z-10 absolute flex items-center p-2 top-5 left-1/2 -translate-x-1/2 w-max gap-1 rounded bg-slate-50 border border-gray-200 shadow-sm"}>
@@ -33,47 +86,36 @@ const Menu = () => {
             <Button variant={"ghost"}>
                 <img src={RedoIcon} className={"w-4 h4"} alt={"Redo"}></img>
             </Button>
-            <Button className={'bg-blue-100'} variant={"ghost"}>
-                <img src={SelectIcon} className={"w-4 h4"} alt={"Select"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={GrabIcon} className={"w-4 h4"} alt={"Grab"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={PenIcon} className={"w-4 h4"} alt={"Pen"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={LineIcon} className={"w-4 h4"} alt={"Line"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={ArrowIcon} className={"w-4 h4"} alt={"Arrow"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={CircleIcon} className={"w-4 h4"} alt={"Circle"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={TriangleIcon} className={"w-4 h4"} alt={"Triangle"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={RectangleIcon} className={"w-4 h4"} alt={"Rectangle"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={TextIcon} className={"w-4 h4"} alt={"Text"}></img>
-            </Button>
+            {
+                toolButtons.map((toolButton) => (
+                    <Button
+                        variant={"ghost"}
+                        className={clsx({"bg-blue-100": tool === toolButton.tool})}
+                        onClick={() => setTool(toolButton.tool)}>
+                        <img
+                            className={"w-4 h4"}
+                            src={toolButton.icon}
+                            alt={toolButton.tool.toLowerCase()}/>
+                    </Button>
+                ))
+            }
             <Button variant={"outline"}>Import image</Button>
-            {/*Thickness size*/}
+            {/*Stroke width*/}
             <div className={"px-4 py-2"}>
                 <img src={ThicknessIcon} className={"w-4 h4"} alt={"Thickness"}></img>
             </div>
             <div>
-                <Select defaultValue={"1"}>
+                <Select
+                    defaultValue={String(strokeWidth)}
+                    onValueChange={(value) => setStrokeWidth(parseInt(value))}>
                     <SelectTrigger className={"w-[60px]"}>
                         <SelectValue placeholder="Thickness"/>
                     </SelectTrigger>
                     <SelectContent className={"w-[60px] min-w-0"}>
                         <SelectGroup>
                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
-                                <SelectItem value={String(value)}>{value}</SelectItem>))
+                                <SelectItem
+                                    value={String(value)}>{value}</SelectItem>))
                             }
                         </SelectGroup>
                     </SelectContent>
@@ -84,7 +126,9 @@ const Menu = () => {
                 <img src={TextSizeIcon} className={"w-4 h4"} alt={"Font size"}></img>
             </div>
             <div>
-                <Select defaultValue={"12"}>
+                <Select
+                    defaultValue={String(fontSize)}
+                    onValueChange={(value) => setFontSize(parseInt(value))}>
                     <SelectTrigger className={"w-[60px]"}>
                         <SelectValue placeholder="Font"/>
                     </SelectTrigger>
@@ -102,14 +146,22 @@ const Menu = () => {
                 <img src={BrushIcon} className={"w-4 h4"} alt={"Fill color"}></img>
             </div>
             <div>
-                <input type="color" className={"w-8 h-8"} defaultValue={"#ffffff"}/>
+                <input
+                    type="color"
+                    className={"w-8 h-8"}
+                    defaultValue={fillColor}
+                    onChange={(e) => setFillColor(e.target.value)}/>
             </div>
             {/*Stroke color*/}
             <div className={"px-4 py-2"}>
                 <img src={StrokeIcon} className={"w-4 h4"} alt={"Stroke color"}></img>
             </div>
             <div>
-                <input type="color" className={"w-8 h-8"} defaultValue={"black"}/>
+                <input
+                    type="color"
+                    className={"w-8 h-8"}
+                    defaultValue={strokeColor}
+                    onChange={(e) => setStrokeColor(e.target.value)}/>
             </div>
         </menu>
     );

@@ -4,7 +4,7 @@ enum ToolType {
     PEN = "PEN",
     LINE = "LINE",
     ARROW = "ARROW",
-    CIRCLE = "CIRCLE",
+    ELLIPSE = "ELLIPSE",
     TRIANGLE = "TRIANGLE",
     RECTANGLE = "RECTANGLE",
     TEXT = "TEXT",
@@ -12,26 +12,13 @@ enum ToolType {
 
 enum ShapeType {
     SCRIBBLE = "SCRIBBLE",
-    TEXT = "TEXT",
     LINE = "LINE",
     ARROW = "ARROW",
-    CIRCLE = "CIRCLE",
+    ELLIPSE = "ELLIPSE",
     TRIANGLE = "TRIANGLE",
     RECTANGLE = "RECTANGLE",
-    IMAGE = "IMAGE"
-}
-
-interface LineShape {
-    shapeType: ShapeType.LINE,
-    id: string,
-    points: number[],
-    stroke: string,
-    strokeWidth: number,
-    offsetX: number,
-    offsetY: number,
-    scaleX: number,
-    scaleY: number,
-    rotation: number
+    TEXT = "TEXT",
+    // IMAGE = "IMAGE"
 }
 
 interface ScribbleShape {
@@ -40,12 +27,66 @@ interface ScribbleShape {
     points: number[],
     stroke: string,
     strokeWidth: number,
-    offsetX: number,
-    offsetY: number,
-    scaleX: number,
-    scaleY: number,
+    rotation: number,
+}
+
+interface LineShape {
+    shapeType: ShapeType.LINE,
+    id: string,
+    points: number[],
+    stroke: string,
+    strokeWidth: number,
     rotation: number
 }
+
+interface ArrowShape {
+    shapeType: ShapeType.ARROW,
+    id: string,
+    points: number[],
+    stroke: string,
+    strokeWidth: number,
+    fill: string,
+    rotation: number,
+}
+
+interface EllipseShape {
+    shapeType: ShapeType.ELLIPSE,
+    id: string,
+    x: number,
+    y: number,
+    radiusX: number,
+    radiusY: number,
+    stroke: string,
+    strokeWidth: number,
+    fill: string,
+    rotation: number
+}
+
+interface TriangleShape {
+    shapeType: ShapeType.TRIANGLE,
+    id: string,
+    x: number,
+    y: number,
+    radius: number,
+    stroke: string,
+    strokeWidth: string,
+    fill: string,
+    rotation: number,
+}
+
+interface RectangleShape {
+    shapeType: ShapeType.RECTANGLE,
+    id: string,
+    x: number,
+    y: number,
+    radiusX: number,
+    radiusY: number,
+    stroke: number,
+    strokeWidth: number,
+    fill: string,
+    rotation: number
+}
+
 
 interface TextShape {
     shapeType: ShapeType.TEXT,
@@ -54,13 +95,16 @@ interface TextShape {
     y: number,
     text: string,
     fontSize: number,
+    rotation: number,
     width?: number,
-    scaleX: number,
-    // No scaleY. Height will be determined automatically depending on a text size (length and font size)
-    // and width of a text container that will be calculated as initial text width * scaleX
-    offsetX: number,
-    offsetY: number,
-    rotation: number
+}
+
+type Shape = ScribbleShape | LineShape | ArrowShape | EllipseShape | TriangleShape | RectangleShape | TextShape;
+
+export {
+    ToolType,
+    ShapeType,
+    type Shape,
 }
 
 
