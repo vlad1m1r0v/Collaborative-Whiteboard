@@ -18,7 +18,6 @@ enum ShapeType {
     TRIANGLE = "TRIANGLE",
     RECTANGLE = "RECTANGLE",
     TEXT = "TEXT",
-    // IMAGE = "IMAGE"
 }
 
 interface ScribbleShape {
@@ -69,7 +68,7 @@ interface TriangleShape {
     y: number,
     radius: number,
     stroke: string,
-    strokeWidth: string,
+    strokeWidth: number,
     fill: string,
     rotation: number,
 }
@@ -79,9 +78,9 @@ interface RectangleShape {
     id: string,
     x: number,
     y: number,
-    radiusX: number,
-    radiusY: number,
-    stroke: number,
+    width: number,
+    height: number,
+    stroke: string,
     strokeWidth: number,
     fill: string,
     rotation: number

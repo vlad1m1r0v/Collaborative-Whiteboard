@@ -1,5 +1,5 @@
 import './App.css'
-import {Layer, Stage, Line} from "react-konva";
+import {Arrow, Ellipse, Layer, Line, Stage, RegularPolygon, Rect} from "react-konva";
 import {usePreventZoom, useScale} from '@/hooks';
 import {Menu} from "@/components";
 import {WhiteboardContext} from "@/context";
@@ -38,7 +38,7 @@ function App() {
                     <Layer>
                         {
                             shapes.map((shape) => {
-                                if (shape.shapeType === ShapeType.SCRIBBLE) {
+                                if (shape.shapeType === ShapeType.SCRIBBLE || shape.shapeType === ShapeType.LINE) {
                                     return (
                                         <Line
                                             points={shape.points}
@@ -48,6 +48,68 @@ function App() {
                                             rotation={shape.rotation}
                                             draggable>
                                         </Line>
+                                    )
+                                }
+
+                                if (shape.shapeType === ShapeType.ARROW) {
+                                    return (
+                                        <Arrow
+                                            points={shape.points}
+                                            key={shape.id}
+                                            stroke={shape.stroke}
+                                            strokeWidth={shape.strokeWidth}
+                                            fill={shape.fill}
+                                            rotation={shape.rotation}
+                                            draggable>
+                                        </Arrow>
+                                    )
+                                }
+
+                                if (shape.shapeType === ShapeType.ELLIPSE) {
+                                    return (
+                                        <Ellipse
+                                            x={shape.x}
+                                            y={shape.y}
+                                            radiusX={shape.radiusX}
+                                            radiusY={shape.radiusY}
+                                            key={shape.id}
+                                            stroke={shape.stroke}
+                                            strokeWidth={shape.strokeWidth}
+                                            fill={shape.fill}
+                                            rotation={shape.rotation}>
+                                        </Ellipse>
+                                    )
+                                }
+
+                                if (shape.shapeType === ShapeType.TRIANGLE) {
+                                    return (
+                                        <RegularPolygon
+                                            x={shape.x}
+                                            y={shape.y}
+                                            radius={shape.radius}
+                                            sides={3}
+                                            key={shape.id}
+                                            stroke={shape.stroke}
+                                            strokeWidth={shape.strokeWidth}
+                                            fill={shape.fill}
+                                            rotation={shape.rotation}>
+                                        </RegularPolygon>
+                                    )
+                                }
+
+                                if (shape.shapeType === ShapeType.RECTANGLE) {
+                                    return (
+                                        <Rect
+                                            x={shape.x}
+                                            y={shape.y}
+                                            width={shape.width}
+                                            height={shape.height}
+                                            key={shape.id}
+                                            stroke={shape.stroke}
+                                            strokeWidth={shape.strokeWidth}
+                                            fill={shape.fill}
+                                            rotation={shape.rotation}>
+                                        </Rect>
                                     )
                                 }
                             })
