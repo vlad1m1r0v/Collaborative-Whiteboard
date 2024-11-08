@@ -57,7 +57,6 @@ export const TextEditor = ({
     return (
         <Html>
             <textarea
-                // autoFocus
                 ref={textareaRef}
                 style={style}
                 value={value}
