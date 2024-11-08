@@ -59,8 +59,8 @@ const WhiteboardContext = createContext<Props>(initialContext);
 
 const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
         const stageRef = useRef<Konva.Stage>(null);
-        const [fontSize, setFontSize] = useState<number>(12);
-        const [fillColor, setFillColor] = useState<string>('#FFFFFF');
+        const [fontSize, setFontSize] = useState<number>(32);
+        const [fillColor, setFillColor] = useState<string>('#ff0000');
         const [strokeColor, setStrokeColor] = useState<string>('#000000');
         const [strokeWidth, setStrokeWidth] = useState<number>(1);
         const [tool, setTool] = useState<ToolType>(ToolType.SELECT);
@@ -73,6 +73,8 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             setIsMouseDown(true);
 
             const stage = e.target.getStage();
+            if (stage !== e.target) return;
+
             const pos = getRelativePointerPosition(stage);
             if (!pos) return;
 
@@ -163,6 +165,23 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
                         width: 0,
                         height: 0,
                     }])
+            }
+
+            if (tool === ToolType.TEXT) {
+                setShapes((prevShapes) => [
+                    ...prevShapes,
+                    {
+                        id,
+                        shapeType: ShapeType.TEXT,
+                        x: pos.x,
+                        y: pos.y,
+                        text: '',
+                        width: 150,
+                        fontSize,
+                        fill: fillColor,
+                        rotation: 0,
+                    }
+                ]);
             }
         }
 

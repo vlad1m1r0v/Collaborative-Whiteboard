@@ -1,9 +1,7 @@
 import './App.css'
 import {Arrow, Ellipse, Layer, Line, Stage, RegularPolygon, Rect} from "react-konva";
-import {usePreventZoom, useScale} from '@/hooks';
-import {Menu} from "@/components";
-import {WhiteboardContext} from "@/context";
-import {useContext} from "react";
+import {usePreventZoom, useScale, useWhiteboard} from '@/hooks';
+import {EditableText, Menu} from "@/components";
 import {ShapeType, ToolType} from "@/types";
 import {clsx} from "clsx";
 
@@ -13,7 +11,7 @@ function App() {
 
     const {stageScale, stagePos, ...draggingProps} = useScale();
 
-    const {stageRef, tool, shapes, onMouseDown, onMouseMove, onMouseUp, isMouseDown} = useContext(WhiteboardContext);
+    const {stageRef, tool, shapes, onMouseDown, onMouseMove, onMouseUp, isMouseDown} = useWhiteboard();
 
     return (
         <>
@@ -92,7 +90,8 @@ function App() {
                                             stroke={shape.stroke}
                                             strokeWidth={shape.strokeWidth}
                                             fill={shape.fill}
-                                            rotation={shape.rotation}>
+                                            rotation={shape.rotation}
+                                            draggable>
                                         </RegularPolygon>
                                     )
                                 }
@@ -111,6 +110,22 @@ function App() {
                                             rotation={shape.rotation}>
                                         </Rect>
                                     )
+                                }
+
+                                if (shape.shapeType === ShapeType.TEXT) {
+                                    return (
+                                        <EditableText
+                                            key={shape.id}
+                                            id={shape.id}
+                                            x={shape.x}
+                                            y={shape.y}
+                                            text={shape.text}
+                                            fontSize={shape.fontSize}
+                                            fill={shape.fill}
+                                            width={shape.width}
+                                            rotation={shape.rotation}
+                                        />
+                                    );
                                 }
                             })
                         }

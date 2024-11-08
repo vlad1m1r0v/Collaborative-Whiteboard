@@ -1,5 +1,5 @@
 import {Html} from "react-konva-utils";
-import React, {RefObject} from 'react';
+import React, {RefObject, useEffect, useRef} from 'react';
 import Konva from "konva";
 
 interface Props {
@@ -16,6 +16,12 @@ export const TextEditor = ({
                                onChange,
                            }: Props) => {
     const [style, setStyle] = React.useState<React.CSSProperties>();
+
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        setTimeout(() => {textareaRef.current?.focus()}, 0)
+    }, []);
 
     React.useLayoutEffect(() => {
         const textNode = textNodeRef.current;
@@ -51,6 +57,8 @@ export const TextEditor = ({
     return (
         <Html>
             <textarea
+                // autoFocus
+                ref={textareaRef}
                 style={style}
                 value={value}
                 onChange={(e) => {

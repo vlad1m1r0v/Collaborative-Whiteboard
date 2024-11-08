@@ -1,17 +1,24 @@
-import React from 'react';
-import { Group, Text } from 'react-konva';
-import { TextEditor } from './TextEditor';
+import React, {useState} from 'react';
+import {Group, Text} from 'react-konva';
+import {TextEditor} from './TextEditor';
 import Konva from 'konva';
-import { TextConfig } from 'konva/lib/shapes/Text';
+import {TextConfig} from 'konva/lib/shapes/Text';
+import {useWhiteboard} from "@/hooks";
 
 interface EditorStProps extends TextConfig {
     text: string;
+    id: string;
 }
 
 export const EditableText = React.forwardRef<Konva.Text, EditorStProps>((props, ref) => {
-    const {text, ...rest } = props;
-    const [editorEnabled, setEditorEnabled] = React.useState(false);
-    const [currentText, setCurrentText] = React.useState(text);
+    const {text, id, ...rest} = props;
+
+    const [editorEnabled, setEditorEnabled] = React.useState(true);
+
+    const [currentText, setCurrentText] = useState(text);
+
+    const {setShapes} = useWhiteboard();
+
     const textRef = React.useRef<Konva.Text>(null);
 
     React.useImperativeHandle(ref, () => textRef.current!);
@@ -34,6 +41,11 @@ export const EditableText = React.forwardRef<Konva.Text, EditorStProps>((props, 
                         textNodeRef={textRef}
                         onChange={(newText) => {
                             setCurrentText(newText);
+
+                            setShapes((prevShapes) => prevShapes.map((shape) => shape.id === id ? {
+                                ...shape,
+                                text: newText,
+                            } : shape));
                         }}
                         onBlur={() => {
                             setEditorEnabled(false);

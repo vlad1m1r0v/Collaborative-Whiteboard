@@ -94,8 +94,9 @@ interface TextShape {
     y: number,
     text: string,
     fontSize: number,
+    fill: string,
     rotation: number,
-    width?: number,
+    width: number
 }
 
 type Shape = ScribbleShape | LineShape | ArrowShape | EllipseShape | TriangleShape | RectangleShape | TextShape;
