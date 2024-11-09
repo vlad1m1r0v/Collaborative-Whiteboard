@@ -1,5 +1,5 @@
 import './App.css'
-import {Arrow, Ellipse, Layer, Line, Stage, RegularPolygon, Rect} from "react-konva";
+import {Arrow, Ellipse, Image, Layer, Line, Rect, RegularPolygon, Stage} from "react-konva";
 import {usePreventZoom, useScale, useWhiteboard} from '@/hooks';
 import {EditableText, Menu} from "@/components";
 import {ShapeType, ToolType} from "@/types";
@@ -39,12 +39,12 @@ function App() {
                                 if (shape.shapeType === ShapeType.SCRIBBLE || shape.shapeType === ShapeType.LINE) {
                                     return (
                                         <Line
-                                            points={shape.points}
                                             key={shape.id}
+                                            points={shape.points}
                                             stroke={shape.stroke}
                                             strokeWidth={shape.strokeWidth}
                                             rotation={shape.rotation}
-                                            draggable>
+                                            draggable={tool===ToolType.GRAB}>
                                         </Line>
                                     )
                                 }
@@ -52,13 +52,13 @@ function App() {
                                 if (shape.shapeType === ShapeType.ARROW) {
                                     return (
                                         <Arrow
-                                            points={shape.points}
                                             key={shape.id}
+                                            points={shape.points}
                                             stroke={shape.stroke}
                                             strokeWidth={shape.strokeWidth}
                                             fill={shape.fill}
                                             rotation={shape.rotation}
-                                            draggable>
+                                            draggable={tool===ToolType.GRAB}>
                                         </Arrow>
                                     )
                                 }
@@ -66,15 +66,16 @@ function App() {
                                 if (shape.shapeType === ShapeType.ELLIPSE) {
                                     return (
                                         <Ellipse
+                                            key={shape.id}
                                             x={shape.x}
                                             y={shape.y}
                                             radiusX={shape.radiusX}
                                             radiusY={shape.radiusY}
-                                            key={shape.id}
                                             stroke={shape.stroke}
                                             strokeWidth={shape.strokeWidth}
                                             fill={shape.fill}
-                                            rotation={shape.rotation}>
+                                            rotation={shape.rotation}
+                                            draggable={tool===ToolType.GRAB}>
                                         </Ellipse>
                                     )
                                 }
@@ -82,16 +83,16 @@ function App() {
                                 if (shape.shapeType === ShapeType.TRIANGLE) {
                                     return (
                                         <RegularPolygon
+                                            key={shape.id}
                                             x={shape.x}
                                             y={shape.y}
                                             radius={shape.radius}
                                             sides={3}
-                                            key={shape.id}
                                             stroke={shape.stroke}
                                             strokeWidth={shape.strokeWidth}
                                             fill={shape.fill}
                                             rotation={shape.rotation}
-                                            draggable>
+                                            draggable={tool===ToolType.GRAB}>
                                         </RegularPolygon>
                                     )
                                 }
@@ -99,15 +100,16 @@ function App() {
                                 if (shape.shapeType === ShapeType.RECTANGLE) {
                                     return (
                                         <Rect
+                                            key={shape.id}
                                             x={shape.x}
                                             y={shape.y}
                                             width={shape.width}
                                             height={shape.height}
-                                            key={shape.id}
                                             stroke={shape.stroke}
                                             strokeWidth={shape.strokeWidth}
                                             fill={shape.fill}
-                                            rotation={shape.rotation}>
+                                            rotation={shape.rotation}
+                                            draggable={tool===ToolType.GRAB}>
                                         </Rect>
                                     )
                                 }
@@ -124,8 +126,22 @@ function App() {
                                             fill={shape.fill}
                                             width={shape.width}
                                             rotation={shape.rotation}
+                                            draggable={tool===ToolType.GRAB}
                                         />
                                     );
+                                }
+
+                                if (shape.shapeType === ShapeType.IMAGE) {
+                                    return <Image
+                                        key={shape.id}
+                                        x={shape.x}
+                                        y={shape.y}
+                                        width={shape.width}
+                                        height={shape.height}
+                                        image={shape.image}
+                                        rotation={shape.rotation}
+                                        draggable={tool === ToolType.GRAB}>
+                                    </Image>
                                 }
                             })
                         }

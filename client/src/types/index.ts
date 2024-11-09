@@ -18,6 +18,7 @@ enum ShapeType {
     TRIANGLE = "TRIANGLE",
     RECTANGLE = "RECTANGLE",
     TEXT = "TEXT",
+    IMAGE = "IMAGE",
 }
 
 interface ScribbleShape {
@@ -99,7 +100,18 @@ interface TextShape {
     width: number
 }
 
-type Shape = ScribbleShape | LineShape | ArrowShape | EllipseShape | TriangleShape | RectangleShape | TextShape;
+interface ImageShape {
+    shapeType: ShapeType.IMAGE,
+    id: string,
+    x: number,
+    y: number,
+    image: HTMLImageElement,
+    height: number,
+    width: number,
+    rotation: number
+}
+
+type Shape = ScribbleShape | LineShape | ArrowShape | EllipseShape | TriangleShape | RectangleShape | TextShape | ImageShape;
 
 export {
     ToolType,

@@ -14,10 +14,11 @@ import TextIcon from "/icons/text.svg";
 import TextSizeIcon from "/icons/text-size.svg";
 import BrushIcon from "/icons/brush.svg";
 import StrokeIcon from "/icons/stroke.svg";
-import {useContext} from "react";
-import {WhiteboardContext} from "@/context";
-import {ToolType} from "@/types";
+import {ShapeType, ToolType} from "@/types";
 import {clsx} from "clsx";
+import {useWhiteboard} from "@/hooks";
+import {ChangeEvent, useRef} from "react";
+import {nanoid} from "nanoid";
 
 interface ToolButtonProps {
     icon: string;
@@ -67,6 +68,7 @@ const Menu = () => {
     const {
         tool,
         setTool,
+        setShapes,
         strokeWidth,
         setStrokeWidth,
         fontSize,
@@ -75,7 +77,36 @@ const Menu = () => {
         setFillColor,
         strokeColor,
         setStrokeColor
-    } = useContext(WhiteboardContext);
+    } = useWhiteboard();
+
+    const hiddenFileInputRef = useRef<HTMLInputElement>(null);
+
+    const onFileUploadButtonClick = () => {
+        hiddenFileInputRef.current?.click();
+    }
+
+    const onHiddenFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            const image = new Image();
+            image.src = imageUrl;
+
+            image.onload = () => {
+                setShapes((prevShapes) => [...prevShapes,
+                    {
+                        id: nanoid(),
+                        shapeType: ShapeType.IMAGE,
+                        x: (window.innerWidth - image.naturalWidth) / 2,
+                        y: (window.innerHeight - image.naturalHeight) / 2,
+                        width: image.naturalWidth,
+                        height: image.naturalHeight,
+                        image: image,
+                        rotation: 0,
+                    }]);
+            };
+        }
+    }
 
     return (
         <menu
@@ -100,7 +131,15 @@ const Menu = () => {
                     </Button>
                 ))
             }
-            <Button variant={"outline"}>Import image</Button>
+            {/*Image Upload*/}
+            <input
+                type="file"
+                accept="image/*"
+                onChange={onHiddenFileInputChange}
+                ref={hiddenFileInputRef}
+                style={{display: 'none'}}
+            />
+            <Button onClick={onFileUploadButtonClick} variant={"outline"}>Import image</Button>
             {/*Stroke width*/}
             <div className={"px-4 py-2"}>
                 <img src={ThicknessIcon} className={"w-4 h4"} alt={"Thickness"}></img>

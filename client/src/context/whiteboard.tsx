@@ -189,6 +189,8 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             if (!isMouseDown) return;
 
             const stage = e.target.getStage();
+            if (stage !== e.target) return;
+
             const pos = getRelativePointerPosition(stage);
             if (!pos) return;
 
