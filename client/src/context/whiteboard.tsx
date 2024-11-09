@@ -186,10 +186,9 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
         }
 
         const onMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-            if (!isMouseDown) return;
+            if (!isMouseDown || !currentShapeRef.current) return;
 
             const stage = e.target.getStage();
-            if (stage !== e.target) return;
 
             const pos = getRelativePointerPosition(stage);
             if (!pos) return;
@@ -243,6 +242,7 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
 
         const onMouseUp = () => {
             setIsMouseDown(false);
+            currentShapeRef.current = undefined;
         }
 
         const value = {

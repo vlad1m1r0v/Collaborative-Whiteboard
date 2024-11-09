@@ -126,7 +126,6 @@ function App() {
                                             fill={shape.fill}
                                             width={shape.width}
                                             rotation={shape.rotation}
-                                            draggable={tool===ToolType.GRAB}
                                         />
                                     );
                                 }

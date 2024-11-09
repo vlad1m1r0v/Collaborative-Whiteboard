@@ -4,6 +4,7 @@ import {TextEditor} from './TextEditor';
 import Konva from 'konva';
 import {TextConfig} from 'konva/lib/shapes/Text';
 import {useWhiteboard} from "@/hooks";
+import {ToolType} from "@/types";
 
 interface EditorStProps extends TextConfig {
     text: string;
@@ -17,14 +18,14 @@ export const EditableText = React.forwardRef<Konva.Text, EditorStProps>((props, 
 
     const [currentText, setCurrentText] = useState(text);
 
-    const {setShapes} = useWhiteboard();
+    const {setShapes, tool} = useWhiteboard();
 
     const textRef = React.useRef<Konva.Text>(null);
 
     React.useImperativeHandle(ref, () => textRef.current!);
 
     return (
-        <Group draggable>
+        <Group draggable={tool === ToolType.GRAB}>
             <Text
                 text={currentText}
                 ref={textRef}
