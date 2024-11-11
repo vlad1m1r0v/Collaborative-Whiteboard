@@ -58,11 +58,11 @@ const initialContext: Props = {
 const WhiteboardContext = createContext<Props>(initialContext);
 
 const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-        const [fontSize, setFontSize] = useState<number>(32);
-        const [fillColor, setFillColor] = useState<string>('#ff0000');
-        const [strokeColor, setStrokeColor] = useState<string>('#000000');
-        const [strokeWidth, setStrokeWidth] = useState<number>(1);
-        const [tool, setTool] = useState<ToolType>(ToolType.SELECT);
+        const [fontSize, setFontSize] = useState<number>(initialContext.fontSize);
+        const [fillColor, setFillColor] = useState<string>(initialContext.fillColor);
+        const [strokeColor, setStrokeColor] = useState<string>(initialContext.strokeColor);
+        const [strokeWidth, setStrokeWidth] = useState<number>(initialContext.strokeWidth);
+        const [tool, setTool] = useState<ToolType>(initialContext.tool);
 
         const stageRef = useRef<Konva.Stage>(null);
 
