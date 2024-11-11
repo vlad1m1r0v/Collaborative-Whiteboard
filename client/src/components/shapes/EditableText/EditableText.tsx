@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {forwardRef, useImperativeHandle, useRef, useState} from 'react';
 import {Group, Text} from 'react-konva';
 import {TextEditor} from './TextEditor';
 import Konva from 'konva';
@@ -11,18 +11,18 @@ interface EditorStProps extends TextConfig {
     id: string;
 }
 
-export const EditableText = React.forwardRef<Konva.Text, EditorStProps>((props, ref) => {
+export const EditableText = forwardRef<Konva.Text, EditorStProps>((props, ref) => {
     const {text, id, ...rest} = props;
 
-    const [editorEnabled, setEditorEnabled] = React.useState(true);
+    const [editorEnabled, setEditorEnabled] = useState(true);
 
     const [currentText, setCurrentText] = useState(text);
 
     const {setShapes, tool} = useWhiteboard();
 
-    const textRef = React.useRef<Konva.Text>(null);
+    const textRef = useRef<Konva.Text>(null);
 
-    React.useImperativeHandle(ref, () => textRef.current!);
+    useImperativeHandle(ref, () => textRef.current!);
 
     return (
         <Group draggable={tool === ToolType.GRAB}>
