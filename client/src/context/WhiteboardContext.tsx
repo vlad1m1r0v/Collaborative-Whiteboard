@@ -5,21 +5,28 @@ import {getRelativePointerPosition} from "@/helpers/konva.ts";
 import {nanoid} from "nanoid";
 import {KonvaEventObject} from "konva/lib/Node";
 
+interface ShapeHistory {
+    prev: Shape[][],
+    next: Shape[][]
+}
+
 interface Props {
-    stageRef: React.RefObject<Konva.Stage>;
-    isMouseDown: boolean;
+    strokeWidth: number;
+    setStrokeWidth: React.Dispatch<React.SetStateAction<number>>;
     fontSize: number;
     setFontSize: React.Dispatch<React.SetStateAction<number>>;
     fillColor: string;
     setFillColor: React.Dispatch<React.SetStateAction<string>>;
     strokeColor: string;
     setStrokeColor: React.Dispatch<React.SetStateAction<string>>;
-    strokeWidth: number;
-    setStrokeWidth: React.Dispatch<React.SetStateAction<number>>;
-    tool: ToolType;
-    setTool: React.Dispatch<React.SetStateAction<ToolType>>;
     shapes: Shape[];
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>;
+    history: ShapeHistory,
+    setHistory: React.Dispatch<React.SetStateAction<ShapeHistory>>;
+    tool: ToolType;
+    setTool: React.Dispatch<React.SetStateAction<ToolType>>;
+    stageRef: React.RefObject<Konva.Stage>;
+    isMouseDown: boolean;
     onMouseDown: (e: KonvaEventObject<MouseEvent>) => void;
     onMouseMove: (e: KonvaEventObject<MouseEvent>) => void;
     onMouseUp: (e: KonvaEventObject<MouseEvent>) => void;
@@ -27,8 +34,9 @@ interface Props {
 }
 
 const initialContext: Props = {
-    stageRef: React.createRef<Konva.Stage>(),
-    isMouseDown: false,
+    strokeWidth: 1,
+    setStrokeWidth: () => {
+    },
     fontSize: 12,
     setFontSize: () => {
     },
@@ -38,15 +46,17 @@ const initialContext: Props = {
     strokeColor: '#000000',
     setStrokeColor: () => {
     },
-    strokeWidth: 1,
-    setStrokeWidth: () => {
-    },
     tool: ToolType.SELECT,
     setTool: () => {
     },
     shapes: [],
     setShapes: () => {
     },
+    history: {prev: [], next: []},
+    setHistory: () => {
+    },
+    stageRef: React.createRef<Konva.Stage>(),
+    isMouseDown: false,
     onMouseDown: () => {
     },
     onMouseMove: () => {
@@ -58,15 +68,21 @@ const initialContext: Props = {
 const WhiteboardContext = createContext<Props>(initialContext);
 
 const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+        // Tool menu state: stroke width, font size, fill color, stroke color and current tool
+        const [strokeColor, setStrokeColor] = useState<string>(initialContext.strokeColor);
         const [fontSize, setFontSize] = useState<number>(initialContext.fontSize);
         const [fillColor, setFillColor] = useState<string>(initialContext.fillColor);
-        const [strokeColor, setStrokeColor] = useState<string>(initialContext.strokeColor);
         const [strokeWidth, setStrokeWidth] = useState<number>(initialContext.strokeWidth);
         const [tool, setTool] = useState<ToolType>(initialContext.tool);
 
+        // Current shape state and history
+        const [shapes, setShapes] = useState<Shape[]>(initialContext.shapes);
+        const [history, setHistory] = useState<ShapeHistory>({prev: [], next: []});
+
+
         const stageRef = useRef<Konva.Stage>(null);
 
-        const [shapes, setShapes] = useState<Shape[]>([]);
+
         const currentShapeRef = useRef<string>();
         const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
 
@@ -83,6 +99,14 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             currentShapeRef.current = id;
 
             if (tool === ToolType.PEN) {
+                setHistory((prevHistory) => (
+                        {
+                            prev: [...prevHistory.prev, shapes],
+                            next: []
+                        }
+                    )
+                );
+
                 setShapes((prevShapes) => [...prevShapes,
                     {
                         id,
@@ -95,6 +119,14 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             }
 
             if (tool === ToolType.LINE) {
+                setHistory((prevHistory) => (
+                        {
+                            prev: [...prevHistory.prev, shapes],
+                            next: []
+                        }
+                    )
+                );
+
                 setShapes((prevShapes) => [...prevShapes,
                     {
                         id,
@@ -108,6 +140,14 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             }
 
             if (tool === ToolType.ARROW) {
+                setHistory((prevHistory) => (
+                        {
+                            prev: [...prevHistory.prev, shapes],
+                            next: []
+                        }
+                    )
+                );
+
                 setShapes((prevShapes) => [...prevShapes,
                     {
                         id,
@@ -122,6 +162,14 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             }
 
             if (tool === ToolType.ELLIPSE) {
+                setHistory((prevHistory) => (
+                        {
+                            prev: [...prevHistory.prev, shapes],
+                            next: []
+                        }
+                    )
+                );
+
                 setShapes((prevShapes) => [...prevShapes,
                     {
                         id,
@@ -138,6 +186,14 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             }
 
             if (tool === ToolType.TRIANGLE) {
+                setHistory((prevHistory) => (
+                        {
+                            prev: [...prevHistory.prev, shapes],
+                            next: []
+                        }
+                    )
+                );
+
                 setShapes((prevShapes) => [...prevShapes,
                     {
                         id,
@@ -153,6 +209,14 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             }
 
             if (tool === ToolType.RECTANGLE) {
+                setHistory((prevHistory) => (
+                        {
+                            prev: [...prevHistory.prev, shapes],
+                            next: []
+                        }
+                    )
+                );
+
                 setShapes((prevShapes) => [...prevShapes,
                     {
                         id,
@@ -169,6 +233,14 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             }
 
             if (tool === ToolType.TEXT) {
+                setHistory((prevHistory) => (
+                        {
+                            prev: [...prevHistory.prev, shapes],
+                            next: []
+                        }
+                    )
+                );
+
                 setShapes((prevShapes) => [
                     ...prevShapes,
                     {
@@ -177,7 +249,7 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
                         x: pos.x,
                         y: pos.y,
                         text: '',
-                        width: 150,
+                        width: 200,
                         fontSize,
                         fill: fillColor,
                         rotation: 0,
@@ -247,20 +319,22 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
         }
 
         const value = {
+            strokeWidth,
+            setStrokeWidth,
             fontSize,
             setFontSize,
             fillColor,
             setFillColor,
             strokeColor,
             setStrokeColor,
-            strokeWidth,
-            setStrokeWidth,
             tool,
             setTool,
-            stageRef,
-            isMouseDown,
             shapes,
             setShapes,
+            history,
+            setHistory,
+            stageRef,
+            isMouseDown,
             onMouseDown,
             onMouseMove,
             onMouseUp
