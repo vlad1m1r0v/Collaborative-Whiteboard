@@ -64,20 +64,26 @@ const toolButtons: ToolButtonProps[] = [
     },
 ];
 
-const Menu = () => {
-    const {
-        tool,
-        setTool,
-        setShapes,
-        strokeWidth,
-        setStrokeWidth,
-        fontSize,
-        setFontSize,
-        fillColor,
-        setFillColor,
-        strokeColor,
-        setStrokeColor
-    } = useWhiteboard();
+
+const ToolButtons = () => {
+    const {tool, setTool} = useWhiteboard();
+
+    return (toolButtons.map((toolButton) => (
+        <Button
+            key={toolButton.tool}
+            variant={"ghost"}
+            className={clsx({"bg-blue-100": tool === toolButton.tool})}
+            onClick={() => setTool(toolButton.tool)}>
+            <img
+                className={"w-4 h4"}
+                src={toolButton.icon}
+                alt={toolButton.tool.toLowerCase()}/>
+        </Button>
+    )))
+};
+
+const ImageUploadButton = () => {
+    const {setShapes} = useWhiteboard();
 
     const hiddenFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -109,29 +115,7 @@ const Menu = () => {
     }
 
     return (
-        <menu
-            className={"z-10 absolute flex items-center p-2 top-5 left-1/2 -translate-x-1/2 w-max gap-1 rounded bg-slate-50 border border-gray-200 shadow-sm"}>
-            <Button variant={"ghost"}>
-                <img src={UndoIcon} className={"w-4 h4"} alt={"Undo"}></img>
-            </Button>
-            <Button variant={"ghost"}>
-                <img src={RedoIcon} className={"w-4 h4"} alt={"Redo"}></img>
-            </Button>
-            {
-                toolButtons.map((toolButton) => (
-                    <Button
-                        key={toolButton.tool}
-                        variant={"ghost"}
-                        className={clsx({"bg-blue-100": tool === toolButton.tool})}
-                        onClick={() => setTool(toolButton.tool)}>
-                        <img
-                            className={"w-4 h4"}
-                            src={toolButton.icon}
-                            alt={toolButton.tool.toLowerCase()}/>
-                    </Button>
-                ))
-            }
-            {/*Image Upload*/}
+        <>
             <input
                 type="file"
                 accept="image/*"
@@ -140,7 +124,15 @@ const Menu = () => {
                 style={{display: 'none'}}
             />
             <Button onClick={onFileUploadButtonClick} variant={"outline"}>Import image</Button>
-            {/*Stroke width*/}
+        </>
+    )
+}
+
+const StrokeWidthSelect = () => {
+    const {strokeWidth, setStrokeWidth} = useWhiteboard();
+
+    return (
+        <>
             <div className={"px-4 py-2"}>
                 <img src={ThicknessIcon} className={"w-4 h4"} alt={"Thickness"}></img>
             </div>
@@ -161,7 +153,14 @@ const Menu = () => {
                     </SelectContent>
                 </Select>
             </div>
-            {/*Font size*/}
+        </>
+    )
+}
+
+const FontSizeSelect = () => {
+    const {fontSize, setFontSize} = useWhiteboard();
+    return (
+        <>
             <div className={"px-4 py-2"}>
                 <img src={TextSizeIcon} className={"w-4 h4"} alt={"Font size"}></img>
             </div>
@@ -181,7 +180,15 @@ const Menu = () => {
                     </SelectContent>
                 </Select>
             </div>
-            {/*Fill color*/}
+        </>
+    )
+}
+
+const FillColorPicker = () => {
+    const {fillColor, setFillColor} = useWhiteboard();
+
+    return (
+        <>
             <div className={"px-4 py-2"}>
                 <img src={BrushIcon} className={"w-4 h4"} alt={"Fill color"}></img>
             </div>
@@ -192,7 +199,15 @@ const Menu = () => {
                     defaultValue={fillColor}
                     onChange={(e) => setFillColor(e.target.value)}/>
             </div>
-            {/*Stroke color*/}
+        </>
+    )
+}
+
+const StrokeColorPicker = () => {
+    const {strokeColor, setStrokeColor} = useWhiteboard();
+
+    return (
+        <>
             <div className={"px-4 py-2"}>
                 <img src={StrokeIcon} className={"w-4 h4"} alt={"Stroke color"}></img>
             </div>
@@ -203,6 +218,33 @@ const Menu = () => {
                     defaultValue={strokeColor}
                     onChange={(e) => setStrokeColor(e.target.value)}/>
             </div>
+        </>
+    )
+}
+
+
+const Menu = () => {
+    return (
+        <menu
+            className={"z-10 absolute flex items-center p-2 top-5 left-1/2 -translate-x-1/2 w-max gap-1 rounded bg-slate-50 border border-gray-200 shadow-sm"}>
+            <Button variant={"ghost"}>
+                <img src={UndoIcon} className={"w-4 h4"} alt={"Undo"}></img>
+            </Button>
+            <Button variant={"ghost"}>
+                <img src={RedoIcon} className={"w-4 h4"} alt={"Redo"}></img>
+            </Button>
+            {/*Tool Buttons*/}
+            <ToolButtons/>
+            {/*Image Upload*/}
+            <ImageUploadButton/>
+            {/*Stroke width*/}
+            <StrokeWidthSelect/>
+            {/*Font size*/}
+            <FontSizeSelect/>
+            {/*Fill color*/}
+            <FillColorPicker/>
+            {/*Stroke color*/}
+            <StrokeColorPicker/>
         </menu>
     );
 };

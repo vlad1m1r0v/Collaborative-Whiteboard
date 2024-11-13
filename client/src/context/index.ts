@@ -1,3 +1,3 @@
-import {WhiteboardContext, WhiteboardProvider} from "@/context/whiteboard.tsx";
+import {WhiteboardContext, WhiteboardProvider} from "@/context/WhiteboardContext.tsx";
 
 export {WhiteboardContext, WhiteboardProvider};
