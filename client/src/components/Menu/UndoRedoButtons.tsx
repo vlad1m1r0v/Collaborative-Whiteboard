@@ -8,8 +8,8 @@ const UndoButton = () => {
     const {history, setHistory, shapes, setShapes} = useWhiteboard();
 
     const onUndoButtonClick = () => {
-        const rest = history.prev.slice(0, -1); // Всі елементи, крім останнього
-        const prevShapeState = history.prev[history.prev.length - 1]; // Останній елемент
+        const rest = history.prev.slice(0, -1);
+        const prevShapeState = history.prev[history.prev.length - 1];
 
         setHistory((prevHistory) => (
             {

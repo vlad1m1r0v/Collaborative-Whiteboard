@@ -25,8 +25,9 @@ export const EditableText = forwardRef<Konva.Text, EditorStProps>((props, ref) =
     useImperativeHandle(ref, () => textRef.current!);
 
     return (
-        <Group draggable={tool === ToolType.GRAB}>
+        <Group>
             <Text
+                draggable={tool === ToolType.GRAB}
                 text={currentText}
                 ref={textRef}
                 onDblClick={() => {

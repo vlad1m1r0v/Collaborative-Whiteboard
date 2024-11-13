@@ -6,7 +6,7 @@ import {ShapeType} from "@/types";
 import {Button} from "@/components/ui";
 
 const ImageUploadButton = () => {
-    const {setShapes} = useWhiteboard();
+    const {shapes, setShapes, setHistory} = useWhiteboard();
 
     const hiddenFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -22,6 +22,11 @@ const ImageUploadButton = () => {
             image.src = imageUrl;
 
             image.onload = () => {
+                setHistory((prevHistory) => ({
+                    prev: [...prevHistory.prev, shapes],
+                    next: []
+                }))
+
                 setShapes((prevShapes) => [...prevShapes,
                     {
                         id: nanoid(),
