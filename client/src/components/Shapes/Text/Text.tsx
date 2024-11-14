@@ -1,44 +1,40 @@
 import {forwardRef, useImperativeHandle, useRef, useState} from 'react';
-import {Group, Text} from 'react-konva';
 import Konva from 'konva';
-import {TextConfig} from 'konva/lib/shapes/Text';
+import {Group, Text as KonvaText} from 'react-konva';
 import {useWhiteboard} from "@/hooks";
-import {ToolType} from "@/types";
+import {TextShape} from "@/types";
 import {TextEditor} from './TextEditor';
 
-interface EditorStProps extends TextConfig {
-    text: string;
-    id: string;
-}
-
-export const EditableText = forwardRef<Konva.Text, EditorStProps>((props, ref) => {
-    const {text, id, ...rest} = props;
-
+export const Text = forwardRef<Konva.Text, { shape: TextShape }>(({shape}, ref) => {
     const [editorEnabled, setEditorEnabled] = useState(true);
 
-    const {setHistory, shapes, setShapes, tool} = useWhiteboard();
+    const {setHistory, shapes, setShapes} = useWhiteboard();
 
     const textRef = useRef<Konva.Text>(null);
 
     useImperativeHandle(ref, () => textRef.current!);
 
-
     return (
         <Group>
-            <Text
-                draggable={tool === ToolType.GRAB}
-                text={text}
+            <KonvaText
+                key={shape.id}
+                width={shape.width}
+                x={shape.x}
+                y={shape.y}
+                fontSize={shape.fontSize}
+                text={shape.text}
+                fill={shape.fill}
+                rotation={shape.rotation}
                 ref={textRef}
                 onDblClick={() => {
                     setEditorEnabled(true);
                 }}
                 visible={!editorEnabled}
-                {...rest}
             />
             {editorEnabled && (
                 <Group>
                     <TextEditor
-                        value={text}
+                        value={shape.text}
                         textNodeRef={textRef}
                         onChange={(newText) => {
                             setHistory((prevHistory) => (
@@ -48,10 +44,10 @@ export const EditableText = forwardRef<Konva.Text, EditorStProps>((props, ref) =
                                 }
                             ));
 
-                            setShapes((prevShapes) => prevShapes.map((shape) => shape.id === id ? {
-                                ...shape,
+                            setShapes((prevShapes) => prevShapes.map((prevShape) => prevShape.id === shape.id ? {
+                                ...prevShape,
                                 text: newText,
-                            } : shape));
+                            } : prevShape));
                         }}
                         onBlur={() => {
                             setEditorEnabled(false);

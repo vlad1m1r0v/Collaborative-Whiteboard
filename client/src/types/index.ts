@@ -1,4 +1,4 @@
-enum ToolType {
+export enum ToolType {
     SELECT = "SELECT",
     GRAB = "GRAB",
     PEN = "PEN",
@@ -10,7 +10,7 @@ enum ToolType {
     TEXT = "TEXT",
 }
 
-enum ShapeType {
+export enum ShapeType {
     SCRIBBLE = "SCRIBBLE",
     LINE = "LINE",
     ARROW = "ARROW",
@@ -21,7 +21,7 @@ enum ShapeType {
     IMAGE = "IMAGE",
 }
 
-interface ScribbleShape {
+export interface ScribbleShape {
     shapeType: ShapeType.SCRIBBLE,
     id: string,
     points: number[],
@@ -30,7 +30,7 @@ interface ScribbleShape {
     rotation: number,
 }
 
-interface LineShape {
+export interface LineShape {
     shapeType: ShapeType.LINE,
     id: string,
     points: number[],
@@ -39,7 +39,7 @@ interface LineShape {
     rotation: number
 }
 
-interface ArrowShape {
+export interface ArrowShape {
     shapeType: ShapeType.ARROW,
     id: string,
     points: number[],
@@ -49,7 +49,7 @@ interface ArrowShape {
     rotation: number,
 }
 
-interface EllipseShape {
+export interface EllipseShape {
     shapeType: ShapeType.ELLIPSE,
     id: string,
     x: number,
@@ -62,7 +62,7 @@ interface EllipseShape {
     rotation: number
 }
 
-interface TriangleShape {
+export interface TriangleShape {
     shapeType: ShapeType.TRIANGLE,
     id: string,
     x: number,
@@ -74,7 +74,7 @@ interface TriangleShape {
     rotation: number,
 }
 
-interface RectangleShape {
+export interface RectangleShape {
     shapeType: ShapeType.RECTANGLE,
     id: string,
     x: number,
@@ -88,7 +88,7 @@ interface RectangleShape {
 }
 
 
-interface TextShape {
+export interface TextShape {
     shapeType: ShapeType.TEXT,
     id: string,
     x: number,
@@ -100,7 +100,7 @@ interface TextShape {
     width: number
 }
 
-interface ImageShape {
+export interface ImageShape {
     shapeType: ShapeType.IMAGE,
     id: string,
     x: number,
@@ -111,13 +111,8 @@ interface ImageShape {
     rotation: number
 }
 
-type Shape = ScribbleShape | LineShape | ArrowShape | EllipseShape | TriangleShape | RectangleShape | TextShape | ImageShape;
+export type Shape = ScribbleShape | LineShape | ArrowShape | EllipseShape | TriangleShape | RectangleShape | TextShape | ImageShape;
 
-export {
-    ToolType,
-    ShapeType,
-    type Shape,
-}
 
 
 
