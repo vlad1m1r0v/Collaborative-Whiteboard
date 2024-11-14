@@ -75,13 +75,11 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
         const [strokeWidth, setStrokeWidth] = useState<number>(initialContext.strokeWidth);
         const [tool, setTool] = useState<ToolType>(initialContext.tool);
 
-        // Current shape state and history
+        // Current shape state and history of shape states
         const [shapes, setShapes] = useState<Shape[]>(initialContext.shapes);
-        const [history, setHistory] = useState<ShapeHistory>({prev: [], next: []});
-
+        const [history, setHistory] = useState<ShapeHistory>(initialContext.history);
 
         const stageRef = useRef<Konva.Stage>(null);
-
 
         const currentShapeRef = useRef<string>();
         const [isMouseDown, setIsMouseDown] = useState<boolean>(false);

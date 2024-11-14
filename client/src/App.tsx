@@ -1,11 +1,10 @@
-import './App.css'
 import {Arrow, Ellipse, Image, Layer, Line, Rect, RegularPolygon, Stage} from "react-konva";
+import {clsx} from "clsx";
 import Menu from "@/components/Menu";
+import {EditableText} from "@/components/shapes";
 import {usePreventZoom, useScale, useWhiteboard} from '@/hooks';
 import {ShapeType, ToolType} from "@/types";
-import {clsx} from "clsx";
-import {EditableText} from "@/components/shapes";
-
+import './App.css'
 
 function App() {
     usePreventZoom();

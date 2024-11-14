@@ -16,19 +16,18 @@ export const EditableText = forwardRef<Konva.Text, EditorStProps>((props, ref) =
 
     const [editorEnabled, setEditorEnabled] = useState(true);
 
-    const [currentText, setCurrentText] = useState(text);
-
-    const {setShapes, tool} = useWhiteboard();
+    const {setHistory, shapes, setShapes, tool} = useWhiteboard();
 
     const textRef = useRef<Konva.Text>(null);
 
     useImperativeHandle(ref, () => textRef.current!);
 
+
     return (
         <Group>
             <Text
                 draggable={tool === ToolType.GRAB}
-                text={currentText}
+                text={text}
                 ref={textRef}
                 onDblClick={() => {
                     setEditorEnabled(true);
@@ -39,10 +38,15 @@ export const EditableText = forwardRef<Konva.Text, EditorStProps>((props, ref) =
             {editorEnabled && (
                 <Group>
                     <TextEditor
-                        value={currentText}
+                        value={text}
                         textNodeRef={textRef}
                         onChange={(newText) => {
-                            setCurrentText(newText);
+                            setHistory((prevHistory) => (
+                                {
+                                    prev: [...prevHistory.prev, shapes],
+                                    next: []
+                                }
+                            ));
 
                             setShapes((prevShapes) => prevShapes.map((shape) => shape.id === id ? {
                                 ...shape,
