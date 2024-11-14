@@ -1,10 +1,10 @@
 import {forwardRef, useImperativeHandle, useRef, useState} from 'react';
 import {Group, Text} from 'react-konva';
-import {TextEditor} from './TextEditor';
 import Konva from 'konva';
 import {TextConfig} from 'konva/lib/shapes/Text';
 import {useWhiteboard} from "@/hooks";
 import {ToolType} from "@/types";
+import {TextEditor} from './TextEditor';
 
 interface EditorStProps extends TextConfig {
     text: string;
