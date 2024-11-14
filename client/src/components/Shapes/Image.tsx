@@ -5,6 +5,7 @@ import {ImageShape} from "@/types";
 const Image: React.FC<{ shape: ImageShape }> = ({shape}) => {
     return (
         <KonvaImage
+            id={shape.id}
             key={shape.id}
             x={shape.x}
             y={shape.y}

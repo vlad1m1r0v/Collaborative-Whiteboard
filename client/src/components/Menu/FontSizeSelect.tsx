@@ -18,8 +18,8 @@ const FontSizeSelect = () => {
                     </SelectTrigger>
                     <SelectContent className={"w-[60px] min-w-0"}>
                         <SelectGroup>
-                            {[8, 12, 16, 20, 24, 28, 32].map((value) => (
-                                <SelectItem value={String(value)}>{value}</SelectItem>))
+                            {[8, 12, 16, 20, 24, 28, 32].map((value, index) => (
+                                <SelectItem key={index} value={String(value)}>{value}</SelectItem>))
                             }
                         </SelectGroup>
                     </SelectContent>

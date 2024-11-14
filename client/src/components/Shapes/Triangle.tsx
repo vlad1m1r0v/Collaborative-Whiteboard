@@ -5,6 +5,7 @@ import {TriangleShape} from "@/types";
 const Triangle: React.FC<{ shape: TriangleShape }> = ({shape}) => {
     return (
         <RegularPolygon
+            id={shape.id}
             key={shape.id}
             x={shape.x}
             y={shape.y}

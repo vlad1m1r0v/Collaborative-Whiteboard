@@ -5,6 +5,7 @@ import {RectangleShape} from "@/types";
 const Rectangle: React.FC<{ shape: RectangleShape }> = ({shape}) => {
     return (
         <KonvaRect
+            id={shape.id}
             key={shape.id}
             x={shape.x}
             y={shape.y}

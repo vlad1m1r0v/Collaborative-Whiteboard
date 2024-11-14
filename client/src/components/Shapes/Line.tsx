@@ -5,6 +5,7 @@ import {LineShape} from "@/types";
 const Line: React.FC<{ shape: LineShape }> = ({shape}) => {
     return (
         <KonvaLine
+            id={shape.id}
             key={shape.id}
             points={shape.points}
             stroke={shape.stroke}

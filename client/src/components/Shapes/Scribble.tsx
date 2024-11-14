@@ -5,6 +5,7 @@ import {ScribbleShape} from "@/types";
 const Scribble: React.FC<{ shape: ScribbleShape }> = ({shape}) => {
     return (
         <KonvaLine
+            id={shape.id}
             key={shape.id}
             points={shape.points}
             stroke={shape.stroke}

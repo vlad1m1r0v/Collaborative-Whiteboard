@@ -1,9 +1,10 @@
-import React, {createContext, useRef, useState} from 'react';
-import Konva from 'konva';
-import {type Shape, ShapeType, ToolType} from "@/types";
-import {getRelativePointerPosition} from "@/helpers/konva.ts";
-import {nanoid} from "nanoid";
+import React, {createContext, createRef, useEffect, useRef, useState} from 'react';
+import Konva from "konva";
 import {KonvaEventObject} from "konva/lib/Node";
+import {nanoid} from "nanoid";
+import {type Shape, ShapeType, ToolType} from "@/types";
+import {getRelativePointerPosition} from "@/helpers/konva";
+
 
 interface ShapeHistory {
     prev: Shape[][],
@@ -25,8 +26,10 @@ interface Props {
     setHistory: React.Dispatch<React.SetStateAction<ShapeHistory>>;
     tool: ToolType;
     setTool: React.Dispatch<React.SetStateAction<ToolType>>;
-    stageRef: React.RefObject<Konva.Stage>;
     isMouseDown: boolean;
+    selectionRectRef: React.RefObject<Konva.Rect>,
+    trRef: React.RefObject<Konva.Transformer>,
+    layerRef: React.RefObject<Konva.Layer>,
     onMouseDown: (e: KonvaEventObject<MouseEvent>) => void;
     onMouseMove: (e: KonvaEventObject<MouseEvent>) => void;
     onMouseUp: (e: KonvaEventObject<MouseEvent>) => void;
@@ -55,8 +58,10 @@ const initialContext: Props = {
     history: {prev: [], next: []},
     setHistory: () => {
     },
-    stageRef: React.createRef<Konva.Stage>(),
     isMouseDown: false,
+    selectionRectRef: createRef(),
+    trRef: createRef(),
+    layerRef: createRef(),
     onMouseDown: () => {
     },
     onMouseMove: () => {
@@ -66,6 +71,14 @@ const initialContext: Props = {
 };
 
 const WhiteboardContext = createContext<Props>(initialContext);
+
+interface SelectionRectProps {
+    isVisible: boolean;
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+}
 
 const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
         // Tool menu state: stroke width, font size, fill color, stroke color and current tool
@@ -79,22 +92,65 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
         const [shapes, setShapes] = useState<Shape[]>(initialContext.shapes);
         const [history, setHistory] = useState<ShapeHistory>(initialContext.history);
 
-        const stageRef = useRef<Konva.Stage>(null);
+        // In current shape we store newly created shape ID
+        const [currentShape, setCurrentShape] = useState<string>();
 
-        const currentShapeRef = useRef<string>();
+        // Store left mouse button state to detect do we draw / select / drag / transform or just move mouse
         const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
+
+        // Store reference to selection rectangle, transformer and layer
+        const selectionRectRef = useRef<Konva.Rect>(null);
+        const trRef = useRef<Konva.Transformer>(null);
+        const layerRef = useRef<Konva.Layer>(null);
+
+        // Store coordinates of selection rectangle as reference
+        const selectionRef = useRef<SelectionRectProps>({isVisible: false, x1: 0, y1: 0, x2: 0, y2: 0});
+
+        // Store IDs of selected shapes so we know which shapes we should insert into transformer
+        const [selectedIds, selectIds] = useState<string[]>([]);
+
+
+        // Update shapes inside transformer each time we select new shapes
+        useEffect(() => {
+            const nodes = selectedIds.map((id) => layerRef.current!.findOne("#" + id));
+
+            trRef.current!.nodes(nodes.filter(node => !!node));
+        }, [selectedIds]);
+
+
+        // Update properties of selection rectangle
+        const updateSelectionRect = () => {
+            const node = selectionRectRef.current!;
+            const selection = selectionRef.current;
+
+            node.setAttrs({
+                visible: selection.isVisible,
+                x: Math.min(selection.x1, selection.x2),
+                y: Math.min(selection.y1, selection.y2),
+                width: Math.abs(selection.x1 - selection.x2),
+                height: Math.abs(selection.y1 - selection.y2),
+                fill: "rgba(0, 161, 255, 0.3)"
+            });
+            node.getLayer()!.batchDraw();
+        };
 
         const onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
             setIsMouseDown(true);
 
+            // If we didn't click on shape or transformer
             const stage = e.target.getStage();
             if (stage !== e.target) return;
 
             const pos = getRelativePointerPosition(stage);
             if (!pos) return;
 
+            if (tool === ToolType.SELECT) {
+                selectionRef.current = {isVisible: true, x1: pos.x, y1: pos.y, x2: pos.x, y2: pos.y};
+                updateSelectionRect();
+            }
+
             const id = nanoid();
-            currentShapeRef.current = id;
+            setCurrentShape(id);
 
             if (tool === ToolType.PEN) {
                 setHistory((prevHistory) => (
@@ -257,14 +313,26 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
         }
 
         const onMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-            if (!isMouseDown || !currentShapeRef.current) return;
+            if (!isMouseDown || !currentShape) return;
 
             const stage = e.target.getStage();
 
+            // Check if we didn't click outside canvas
             const pos = getRelativePointerPosition(stage);
             if (!pos) return;
 
-            const id = currentShapeRef.current;
+            if (tool === ToolType.SELECT) {
+                const selection = selectionRef.current;
+
+                if (!selection.isVisible) return;
+
+                selection.x2 = pos.x;
+                selection.y2 = pos.y;
+
+                updateSelectionRect();
+            }
+
+            const id = currentShape;
 
             if (tool === ToolType.PEN) {
                 setShapes((prevShapes) => prevShapes.map((shape) =>
@@ -275,9 +343,18 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
                 ))
             }
 
-            if (tool === ToolType.LINE || tool === ToolType.ARROW) {
+            if (tool === ToolType.LINE) {
                 setShapes((prevShapes) => prevShapes.map((shape) =>
-                    (shape.shapeType === ShapeType.LINE || shape.shapeType === ShapeType.ARROW) && shape.id === id ? {
+                    shape.shapeType === ShapeType.LINE && shape.id === id ? {
+                        ...shape,
+                        points: [shape.points[0], shape.points[1], pos.x, pos.y]
+                    } : shape
+                ))
+            }
+
+            if (tool === ToolType.ARROW) {
+                setShapes((prevShapes) => prevShapes.map((shape) =>
+                    shape.shapeType === ShapeType.ARROW && shape.id === id ? {
                         ...shape,
                         points: [shape.points[0], shape.points[1], pos.x, pos.y]
                     } : shape
@@ -312,8 +389,33 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
         }
 
         const onMouseUp = () => {
+            if (tool === ToolType.SELECT) {
+                const selection = selectionRef.current;
+
+                selection.isVisible = false;
+
+                const selBox = selectionRectRef.current!.getClientRect();
+
+                const elements: (Konva.Shape | Konva.Group)[] = [];
+
+                layerRef.current!.children.forEach((child) => {
+                    // Only shapes are given ids excluding selection rectangle
+                    if (child.id().length > 0) {
+                        const elBox = child.getClientRect();
+
+                        if (Konva.Util.haveIntersection(selBox, elBox)) {
+                            elements.push(child);
+                        }
+                    }
+                });
+
+                selectIds(elements.map((el) => el.id()));
+
+                updateSelectionRect();
+            }
+
             setIsMouseDown(false);
-            currentShapeRef.current = undefined;
+            setCurrentShape(undefined);
         }
 
         const value = {
@@ -331,8 +433,10 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             setShapes,
             history,
             setHistory,
-            stageRef,
             isMouseDown,
+            selectionRectRef,
+            trRef,
+            layerRef,
             onMouseDown,
             onMouseMove,
             onMouseUp

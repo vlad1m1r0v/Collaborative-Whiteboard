@@ -6,6 +6,7 @@ import {ArrowShape} from "@/types";
 const Arrow: React.FC<{ shape: ArrowShape }> = ({shape}) => {
     return (
         <KonvaArrow
+            id={shape.id}
             key={shape.id}
             points={shape.points}
             stroke={shape.stroke}

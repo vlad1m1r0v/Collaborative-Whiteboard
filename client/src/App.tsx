@@ -1,4 +1,4 @@
-import {Layer, Stage} from "react-konva";
+import {Layer, Stage, Rect, Transformer} from "react-konva";
 import {clsx} from "clsx";
 import Menu from "@/components/Menu";
 import Shapes from "@/components/Shapes";
@@ -11,14 +11,13 @@ function App() {
 
     const {stageScale, stagePos, ...draggingProps} = useScale();
 
-    const {stageRef, tool, isMouseDown, onMouseDown, onMouseMove, onMouseUp,} = useWhiteboard();
+    const {tool, isMouseDown, selectionRectRef, trRef, layerRef, onMouseDown, onMouseMove, onMouseUp} = useWhiteboard();
 
     return (
         <>
             <div className="grid-background">
                 <Menu/>
                 <Stage
-                    ref={stageRef}
                     width={window.innerWidth}
                     height={window.innerHeight}
                     {...draggingProps}
@@ -33,8 +32,15 @@ function App() {
                         'cursor-grabbing': tool === ToolType.GRAB && isMouseDown,
                     })}
                 >
-                    <Layer>
+                    <Layer ref={layerRef}>
+                        {/*All shapes are rendered there*/}
                         <Shapes/>
+                        {/*Transformer which allows us to rotate / resize shapes*/}
+                        <Transformer
+                            ref={trRef}
+                        />
+                        {/*Selection rectangle*/}
+                        <Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef}/>
                     </Layer>
                 </Stage>
             </div>

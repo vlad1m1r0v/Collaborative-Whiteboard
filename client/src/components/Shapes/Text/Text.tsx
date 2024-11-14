@@ -15,8 +15,9 @@ export const Text = forwardRef<Konva.Text, { shape: TextShape }>(({shape}, ref) 
     useImperativeHandle(ref, () => textRef.current!);
 
     return (
-        <Group>
+        <>
             <KonvaText
+                id={shape.id}
                 key={shape.id}
                 width={shape.width}
                 x={shape.x}
@@ -55,6 +56,6 @@ export const Text = forwardRef<Konva.Text, { shape: TextShape }>(({shape}, ref) 
                     />
                 </Group>
             )}
-        </Group>
+        </>
     );
 });
