@@ -33,7 +33,8 @@ interface Props {
     onMouseDown: (e: KonvaEventObject<MouseEvent>) => void;
     onMouseMove: (e: KonvaEventObject<MouseEvent>) => void;
     onMouseUp: (e: KonvaEventObject<MouseEvent>) => void;
-
+    onTouchStart: (e: KonvaEventObject<TouchEvent>) => void;
+    onClickTap: (e: KonvaEventObject<MouseEvent>) => void;
 }
 
 const initialContext: Props = {
@@ -68,6 +69,10 @@ const initialContext: Props = {
     },
     onMouseUp: () => {
     },
+    onTouchStart: () => {
+    },
+    onClickTap: () => {
+    }
 };
 
 const WhiteboardContext = createContext<Props>(initialContext);
@@ -116,7 +121,6 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
 
             trRef.current!.nodes(nodes.filter(node => !!node));
         }, [selectedIds]);
-
 
         // Update properties of selection rectangle
         const updateSelectionRect = () => {
@@ -390,6 +394,14 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
 
         const onMouseUp = () => {
             if (tool === ToolType.SELECT) {
+                // If we just clicked - do nothing
+                const {x1, x2, y1, y2} = selectionRef.current;
+                const isClicked = x1 == x2 && y1 == y2;
+
+                if (isClicked) {
+                    return;
+                }
+
                 const selection = selectionRef.current;
 
                 selection.isVisible = false;
@@ -418,6 +430,57 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             setCurrentShape(undefined);
         }
 
+        // Deselect shapes which are inside transformer if we clicked on empty area
+        const onTouchStart = (e: KonvaEventObject<TouchEvent>) => {
+            const clickedOnEmpty = e.target === e.target.getStage();
+
+            if (clickedOnEmpty) {
+                selectIds([]);
+            }
+        };
+
+        const onClickTap = (e: KonvaEventObject<MouseEvent>) => {
+            // If we select with selection rectangle - do nothing
+            const {x1, x2, y1, y2} = selectionRef.current;
+            const isMoved = x1 !== x2 || y1 !== y2;
+
+            if (isMoved) {
+                return;
+            }
+
+            const stage = e.target.getStage()!;
+            const layer = layerRef.current!;
+            const tr = trRef.current!;
+
+            // If we clicked on empty area - remove all selections
+            if (e.target === stage) {
+                selectIds([]);
+                return;
+            }
+
+            // If target has no id then it's not shape
+            if (e.target.id().length === 0) return;
+
+            // Did we press shift or ctrl?
+            const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+
+            // Is shape inside transformer already?
+            const isSelected = tr.nodes().indexOf(e.target) >= 0;
+
+            // If no key pressed and the node is not selected - select just one
+            if (!metaPressed && !isSelected) {
+                selectIds([e.target.id()]);
+                // if we pressed keys and node was selected - we need to remove it from selection
+            } else if (metaPressed && isSelected) {
+                selectIds((prevIds) => (prevIds.filter((shapeId) => shapeId !== e.target.id())))
+                // Add node into selection
+            } else if (metaPressed && !isSelected) {
+                selectIds((prevIds) => ([...prevIds, e.target.id()]));
+            }
+
+            layer.draw();
+        }
+
         const value = {
             strokeWidth,
             setStrokeWidth,
@@ -439,7 +502,9 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             layerRef,
             onMouseDown,
             onMouseMove,
-            onMouseUp
+            onMouseUp,
+            onTouchStart,
+            onClickTap
         };
 
         return (

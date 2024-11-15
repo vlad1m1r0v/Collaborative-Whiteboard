@@ -11,7 +11,18 @@ function App() {
 
     const {stageScale, stagePos, ...draggingProps} = useScale();
 
-    const {tool, isMouseDown, selectionRectRef, trRef, layerRef, onMouseDown, onMouseMove, onMouseUp} = useWhiteboard();
+    const {
+        tool,
+        isMouseDown,
+        selectionRectRef,
+        trRef,
+        layerRef,
+        onMouseDown,
+        onMouseMove,
+        onMouseUp,
+        onTouchStart,
+        onClickTap
+    } = useWhiteboard();
 
     return (
         <>
@@ -26,6 +37,9 @@ function App() {
                     onMouseDown={onMouseDown}
                     onMouseMove={onMouseMove}
                     onMouseUp={onMouseUp}
+                    onTouchStart={onTouchStart}
+                    onClick={onClickTap}
+                    onTap={onClickTap}
                     draggable={tool === ToolType.GRAB}
                     className={clsx({
                         'cursor-grab': tool === ToolType.GRAB && !isMouseDown,
@@ -38,6 +52,7 @@ function App() {
                         {/*Transformer which allows us to rotate / resize shapes*/}
                         <Transformer
                             ref={trRef}
+                            ignoreStroke
                         />
                         {/*Selection rectangle*/}
                         <Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef}/>
