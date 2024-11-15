@@ -21,7 +21,8 @@ function App() {
         onMouseMove,
         onMouseUp,
         onTouchStart,
-        onClickTap
+        onClickTap,
+        onTransform
     } = useWhiteboard();
 
     return (
@@ -52,7 +53,7 @@ function App() {
                         {/*Transformer which allows us to rotate / resize shapes*/}
                         <Transformer
                             ref={trRef}
-                            ignoreStroke
+                            onTransform={onTransform}
                         />
                         {/*Selection rectangle*/}
                         <Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef}/>

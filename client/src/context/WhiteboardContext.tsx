@@ -27,6 +27,7 @@ interface Props {
     tool: ToolType;
     setTool: React.Dispatch<React.SetStateAction<ToolType>>;
     isMouseDown: boolean;
+    selectedIds: string[];
     selectionRectRef: React.RefObject<Konva.Rect>,
     trRef: React.RefObject<Konva.Transformer>,
     layerRef: React.RefObject<Konva.Layer>,
@@ -35,6 +36,7 @@ interface Props {
     onMouseUp: (e: KonvaEventObject<MouseEvent>) => void;
     onTouchStart: (e: KonvaEventObject<TouchEvent>) => void;
     onClickTap: (e: KonvaEventObject<MouseEvent>) => void;
+    onTransform: (e: KonvaEventObject<Event>) => void;
 }
 
 const initialContext: Props = {
@@ -60,6 +62,7 @@ const initialContext: Props = {
     setHistory: () => {
     },
     isMouseDown: false,
+    selectedIds: [],
     selectionRectRef: createRef(),
     trRef: createRef(),
     layerRef: createRef(),
@@ -72,7 +75,9 @@ const initialContext: Props = {
     onTouchStart: () => {
     },
     onClickTap: () => {
-    }
+    },
+    onTransform: () => {
+    },
 };
 
 const WhiteboardContext = createContext<Props>(initialContext);
@@ -314,7 +319,7 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
                     }
                 ]);
             }
-        }
+        };
 
         const onMouseMove = (e: KonvaEventObject<MouseEvent>) => {
             if (!isMouseDown || !currentShape) return;
@@ -390,7 +395,7 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
                         height: pos.y - shape.y,
                     } : shape))
             }
-        }
+        };
 
         const onMouseUp = () => {
             if (tool === ToolType.SELECT) {
@@ -428,7 +433,7 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
 
             setIsMouseDown(false);
             setCurrentShape(undefined);
-        }
+        };
 
         // Deselect shapes which are inside transformer if we clicked on empty area
         const onTouchStart = (e: KonvaEventObject<TouchEvent>) => {
@@ -479,7 +484,9 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             }
 
             layer.draw();
-        }
+        };
+
+        const onTransform = (e: KonvaEventObject<Event>) => {};
 
         const value = {
             strokeWidth,
@@ -497,6 +504,7 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             history,
             setHistory,
             isMouseDown,
+            selectedIds,
             selectionRectRef,
             trRef,
             layerRef,
@@ -504,7 +512,8 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             onMouseMove,
             onMouseUp,
             onTouchStart,
-            onClickTap
+            onClickTap,
+            onTransform
         };
 
         return (

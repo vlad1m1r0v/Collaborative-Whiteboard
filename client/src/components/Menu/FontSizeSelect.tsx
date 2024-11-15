@@ -3,7 +3,33 @@ import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVal
 import TextSizeIcon from "/icons/text-size.svg";
 
 const FontSizeSelect = () => {
-    const {fontSize, setFontSize} = useWhiteboard();
+    const {selectedIds, shapes, setShapes, setHistory, fontSize, setFontSize} = useWhiteboard();
+
+    const onChange = (value: string) => {
+        const newFontSize = parseInt(value);
+
+        setFontSize(parseInt(value));
+
+        const hasChanges = shapes.some(
+            (shape) => selectedIds.includes(shape.id) && 'fontSize' in shape && shape.fontSize !== newFontSize
+        );
+
+        if (hasChanges) {
+            setHistory((prevHistory) => ({
+                prev: [...prevHistory.prev, shapes],
+                next: [],
+            }));
+
+            setShapes((shapes) =>
+                shapes.map((shape) =>
+                    selectedIds.includes(shape.id) && 'fontSize' in shape
+                        ? {...shape, fontSize: newFontSize}
+                        : shape
+                )
+            );
+        }
+    };
+
     return (
         <>
             <div className={"px-4 py-2"}>
@@ -12,7 +38,7 @@ const FontSizeSelect = () => {
             <div>
                 <Select
                     defaultValue={String(fontSize)}
-                    onValueChange={(value) => setFontSize(parseInt(value))}>
+                    onValueChange={onChange}>
                     <SelectTrigger className={"w-[60px]"}>
                         <SelectValue placeholder="Font"/>
                     </SelectTrigger>

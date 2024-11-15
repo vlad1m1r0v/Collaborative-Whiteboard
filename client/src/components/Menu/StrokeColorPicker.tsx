@@ -2,22 +2,48 @@ import {useWhiteboard} from "@/hooks";
 import StrokeIcon from "/icons/stroke.svg";
 
 const StrokeColorPicker = () => {
-    const {strokeColor, setStrokeColor} = useWhiteboard();
+    const {selectedIds, shapes, setShapes, setHistory, strokeColor, setStrokeColor} = useWhiteboard();
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+
+        setStrokeColor(value);
+
+        const hasChanges = shapes.some(
+            (shape) => selectedIds.includes(shape.id) && 'stroke' in shape && shape.stroke !== value
+        );
+
+        if (hasChanges) {
+            setHistory((prevHistory) => ({
+                prev: [...prevHistory.prev, shapes],
+                next: [],
+            }));
+
+            setShapes((shapes) =>
+                shapes.map((shape) =>
+                    selectedIds.includes(shape.id) && 'stroke' in shape
+                        ? {...shape, stroke: value}
+                        : shape
+                )
+            );
+        }
+    };
 
     return (
         <>
             <div className={"px-4 py-2"}>
-                <img src={StrokeIcon} className={"w-4 h4"} alt={"Stroke color"}></img>
+                <img src={StrokeIcon} className={"w-4 h-4"} alt={"Stroke color"} />
             </div>
             <div>
                 <input
                     type="color"
                     className={"w-8 h-8"}
                     defaultValue={strokeColor}
-                    onChange={(e) => setStrokeColor(e.target.value)}/>
+                    onChange={onChange}
+                />
             </div>
         </>
-    )
-}
+    );
+};
 
 export default StrokeColorPicker;
