@@ -128,6 +128,29 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             trRef.current!.nodes(nodes.filter(node => !!node));
         }, [selectedIds]);
 
+        useEffect(() => {
+            const onDeleteButtonPress = (event: KeyboardEvent) => {
+                if (event.key === "Delete" && selectedIds.length > 0) {
+                    setHistory((prevHistory) => ({
+                        prev: [...prevHistory.prev, shapes],
+                        next: []
+                    }));
+
+                    setShapes((prevShapes) =>
+                        prevShapes.filter((shape) => !selectedIds.includes(shape.id))
+                    );
+                    selectIds([]);
+                }
+            };
+
+            window.addEventListener("keydown", onDeleteButtonPress);
+
+            return () => {
+                window.removeEventListener("keydown", onDeleteButtonPress);
+            };
+        }, [selectedIds]);
+
+
         // Update properties of selection rectangle
         const updateSelectionRect = () => {
             const node = selectionRectRef.current!;
