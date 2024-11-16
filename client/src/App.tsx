@@ -41,8 +41,6 @@ function App() {
                     onTouchStart={onTouchStart}
                     onClick={onClickTap}
                     onTap={onClickTap}
-                    onTransformStart={onChangeStart}
-                    onDragStart={onChangeStart}
                     draggable={tool === ToolType.GRAB}
                     className={clsx({
                         'cursor-grab': tool === ToolType.GRAB && !isMouseDown,
@@ -55,6 +53,8 @@ function App() {
                         {/*Transformer which allows us to rotate / resize shapes*/}
                         <Transformer
                             ref={trRef}
+                            onTransformStart={onChangeStart}
+                            onDragStart={onChangeStart}
                         />
                         {/*Selection rectangle*/}
                         <Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef}/>
