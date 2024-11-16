@@ -412,6 +412,11 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
 
                 selection.isVisible = false;
 
+                selection.x1 = 0;
+                selection.y1 = 0;
+                selection.x2 = 0;
+                selection.y2 = 0;
+
                 const selBox = selectionRectRef.current!.getClientRect();
 
                 const elements: (Konva.Shape | Konva.Group)[] = [];
