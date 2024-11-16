@@ -8,9 +8,26 @@ import {TextEditor} from './TextEditor';
 export const Text = forwardRef<Konva.Text, { shape: TextShape }>(({shape}, ref) => {
     const [editorEnabled, setEditorEnabled] = useState(true);
 
-    const {setHistory, shapes, setShapes} = useWhiteboard();
+    const {selectedIds, setHistory, shapes, setShapes} = useWhiteboard();
 
     const textRef = useRef<Konva.Text>(null);
+
+    const onChange = () => {
+        const node = textRef.current!;
+
+        const scaleX = node.scaleX();
+
+        node.scaleX(1.0);
+        node.scaleY(1.0);
+
+        setShapes((prevShapes) => prevShapes.map((prevShape) => prevShape.id === shape.id ? ({
+            ...prevShape,
+            x: node.x(),
+            y: node.y(),
+            width: node.width() * scaleX,
+            rotation: node.rotation(),
+        }) : prevShape));
+    };
 
     useImperativeHandle(ref, () => textRef.current!);
 
@@ -30,6 +47,9 @@ export const Text = forwardRef<Konva.Text, { shape: TextShape }>(({shape}, ref) 
                 onDblClick={() => {
                     setEditorEnabled(true);
                 }}
+                onDragMove={onChange}
+                onTransform={onChange}
+                draggable={selectedIds.includes(shape.id)}
                 visible={!editorEnabled}
             />
             {editorEnabled && (

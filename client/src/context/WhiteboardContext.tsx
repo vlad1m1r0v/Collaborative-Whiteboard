@@ -36,7 +36,7 @@ interface Props {
     onMouseUp: (e: KonvaEventObject<MouseEvent>) => void;
     onTouchStart: (e: KonvaEventObject<TouchEvent>) => void;
     onClickTap: (e: KonvaEventObject<MouseEvent>) => void;
-    onTransform: (e: KonvaEventObject<Event>) => void;
+    onChangeStart: (e: KonvaEventObject<Event>) => void;
 }
 
 const initialContext: Props = {
@@ -76,7 +76,8 @@ const initialContext: Props = {
     },
     onClickTap: () => {
     },
-    onTransform: () => {
+    onChangeStart: () => {
+
     },
 };
 
@@ -486,7 +487,12 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             layer.draw();
         };
 
-        const onTransform = (e: KonvaEventObject<Event>) => {};
+        const onChangeStart = () => {
+            setHistory((prevHistory) => ({
+                prev: [...prevHistory.prev, shapes],
+                next: []
+            }));
+        };
 
         const value = {
             strokeWidth,
@@ -513,7 +519,7 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({children})
             onMouseUp,
             onTouchStart,
             onClickTap,
-            onTransform
+            onChangeStart
         };
 
         return (
