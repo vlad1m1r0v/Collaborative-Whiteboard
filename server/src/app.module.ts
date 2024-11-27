@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import mongoConfig from 'src/config/mongo.config';
+import { UserController } from './users/users.controlller';
 
 @Module({
   imports: [
@@ -21,5 +22,6 @@ import mongoConfig from 'src/config/mongo.config';
     AuthModule,
     UsersModule,
   ],
+  controllers: [UserController],
 })
 export class AppModule {}
