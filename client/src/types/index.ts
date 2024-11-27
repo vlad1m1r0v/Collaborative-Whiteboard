@@ -111,10 +111,12 @@ export interface ImageShape {
     rotation: number
 }
 
-export type Shape = ScribbleShape | LineShape | ArrowShape | EllipseShape | TriangleShape | RectangleShape | TextShape | ImageShape;
-
-
-
-
-
-
+export type Shape =
+    ScribbleShape
+    | LineShape
+    | ArrowShape
+    | EllipseShape
+    | TriangleShape
+    | RectangleShape
+    | TextShape
+    | ImageShape;
