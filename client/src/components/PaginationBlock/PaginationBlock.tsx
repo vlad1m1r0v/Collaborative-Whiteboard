@@ -44,7 +44,6 @@ const PaginationComponent: React.FC<PaginationProps> = ({
                         href={`?page=${i}`}
                         isActive={i === page}
                         onClick={(e) => {
-                            e.preventDefault();
                             handlePageChange(i);
                         }}
                     >
