@@ -33,6 +33,21 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination"
 
+import {
+    Dialog,
+    DialogPortal,
+    DialogOverlay,
+    DialogTrigger,
+    DialogClose,
+    DialogContent,
+    DialogHeader,
+    DialogFooter,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog"
+
+import {Label} from "@/components/ui/label"
+
 export {
     Button,
     Select,
@@ -60,4 +75,15 @@ export {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
+    Dialog,
+    DialogPortal,
+    DialogOverlay,
+    DialogTrigger,
+    DialogClose,
+    DialogContent,
+    DialogHeader,
+    DialogFooter,
+    DialogTitle,
+    DialogDescription,
+    Label
 };

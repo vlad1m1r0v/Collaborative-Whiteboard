@@ -23,7 +23,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem('refreshToken');
-
+      console.log({refreshToken});
       if (!refreshToken) {
         console.error('No refresh token found');
         window.location.href = 'http://localhost:3000/auth/google/login';
@@ -40,7 +40,6 @@ axiosInstance.interceptors.response.use(
             },
           }
         );
-
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
 

@@ -3,11 +3,12 @@ import { AuthService } from './auth.service';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { RefreshAuthGuard } from './guards/refresh-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {
+  }
+
   @UseGuards(RefreshAuthGuard)
   @Post('refresh')
   refreshToken(@Req() req) {
@@ -20,12 +21,10 @@ export class AuthController {
     this.authService.signOut(req.user.id);
   }
 
-  @Public()
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
   googleLogin() {}
 
-  @Public()
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleCallback(@Req() req, @Res() res) {

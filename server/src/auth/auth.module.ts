@@ -29,10 +29,6 @@ import { AuthController } from './auth.controller';
     JwtStrategy,
     RefreshJwtStrategy,
     GoogleStrategy,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
   ],
   controllers: [AuthController],
 })
