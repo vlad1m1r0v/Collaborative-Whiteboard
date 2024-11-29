@@ -43,7 +43,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
                     <PaginationLink
                         href={`?page=${i}`}
                         isActive={i === page}
-                        onClick={(e) => {
+                        onClick={() => {
                             handlePageChange(i);
                         }}
                     >
