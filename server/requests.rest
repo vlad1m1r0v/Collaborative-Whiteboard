@@ -1,2 +1,0 @@
-POST http://localhost:3000/auth/refresh
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzQ3MzNkMmYxYTlkYTA5ZmFhZWY1YTkiLCJpYXQiOjE3MzI3MzMyMzgsImV4cCI6MTczMzMzODAzOH0.YMRLnXFgr2TS6YU7VCd0bnTQrCX-NUX6Xrkejacs3Os
