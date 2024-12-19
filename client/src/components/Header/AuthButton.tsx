@@ -18,8 +18,6 @@ const getInitials = (firstName: string, lastName: string): string => {
 const AuthButton = () => {
   const { user, logout } = useAuth();
 
-  console.log({user});
-
   return (
     <>
       <DropdownMenu>

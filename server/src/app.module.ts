@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import mongoConfig from 'src/config/mongo.config';
 import { UserController } from './users/users.controlller';
+import { WebsocketsGateway } from './websockets/websockets.gateway';
 
 @Module({
   imports: [
@@ -23,5 +24,6 @@ import { UserController } from './users/users.controlller';
     UsersModule,
   ],
   controllers: [UserController],
+  providers: [WebsocketsGateway],
 })
 export class AppModule {}
