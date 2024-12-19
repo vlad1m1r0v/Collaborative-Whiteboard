@@ -5,7 +5,7 @@ import {useWhiteboard} from "@/hooks";
 
 
 const UndoButton = () => {
-    const {history, setHistory, shapes, setShapes} = useWhiteboard();
+    const {history, setHistory, shapes, setShapes, socket, uuid} = useWhiteboard();
 
     const onUndoButtonClick = () => {
         const rest = history.prev.slice(0, -1);
@@ -19,6 +19,8 @@ const UndoButton = () => {
         ));
 
         setShapes(() => prevShapeState);
+
+      socket?.emit('undo', uuid);
     };
 
     return (
@@ -29,7 +31,7 @@ const UndoButton = () => {
 };
 
 const RedoButton = () => {
-    const {history, setHistory, shapes, setShapes} = useWhiteboard();
+    const {history, setHistory, shapes, setShapes, socket, uuid} = useWhiteboard();
 
     const onRedoButtonClick = () => {
         const [nextShapeState, ...rest] = history.next;
@@ -42,6 +44,8 @@ const RedoButton = () => {
         ));
 
         setShapes(() => nextShapeState);
+
+      socket?.emit('redo', uuid);
     };
 
     return (

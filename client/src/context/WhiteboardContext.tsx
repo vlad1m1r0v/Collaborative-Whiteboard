@@ -7,7 +7,8 @@ import { io, Socket } from 'socket.io-client';
 import {
   ArrowShape,
   EllipseShape,
-  LineShape, RectangleShape,
+  LineShape,
+  RectangleShape,
   ScribbleShape,
   type Shape,
   ShapeType,
@@ -48,6 +49,8 @@ interface Props {
   onTouchStart: (e: KonvaEventObject<TouchEvent>) => void;
   onClickTap: (e: KonvaEventObject<MouseEvent>) => void;
   onChangeStart: (e: KonvaEventObject<Event>) => void;
+  socket: Socket | undefined;
+  uuid: string | undefined;
 }
 
 const initialContext: Props = {
@@ -88,8 +91,9 @@ const initialContext: Props = {
   onClickTap: () => {
   },
   onChangeStart: () => {
-
   },
+  socket: undefined,
+  uuid: undefined,
 };
 
 const WhiteboardContext = createContext<Props>(initialContext);
@@ -113,6 +117,19 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Current shape state and history of shape states
     const [shapes, setShapes] = useState<Shape[]>(initialContext.shapes);
     const [history, setHistory] = useState<ShapeHistory>(initialContext.history);
+
+    // There is no better way to omit stale closure in state hooks
+    const shapesRef = useRef<Shape[]>(shapes);
+    const historyRef = useRef<ShapeHistory>(history);
+
+    useEffect(() => {
+      shapesRef.current = shapes;
+    }, [shapes]);
+
+    useEffect(() => {
+      historyRef.current = history;
+    }, [history]);
+
 
     // In current shape we store newly created shape ID
     const [currentShape, setCurrentShape] = useState<string>();
@@ -145,19 +162,16 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const { uuid } = useParams();
 
+    // Join user to room and listen to events from other users of the same room
     useEffect(() => {
       if (uuid && socket) {
         socket?.emit('joinRoom', uuid);
 
         const createShape = (shape: Shape) => {
-          setHistory((prevHistory) => (
-              {
-                prev: [...prevHistory.prev, shapes],
-                next: [],
-              }
-            ),
-          );
-
+          setHistory((prevHistory) => ({
+            prev: [...prevHistory.prev, shapesRef.current],
+            next: [],
+          }));
           setShapes((prevShapes) => [...prevShapes, shape]);
         };
 
@@ -168,12 +182,45 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ));
         };
 
+        const undo = () => {
+          const { prev, next } = historyRef.current;
+          if (!prev.length) return;
+
+          const prevShapeState = prev[prev.length - 1];
+          const rest = prev.slice(0, -1);
+
+          setHistory({
+            prev: rest,
+            next: [shapesRef.current, ...next],
+          });
+
+          setShapes(prevShapeState);
+        };
+
+        const redo = () => {
+          const { prev, next } = historyRef.current;
+          if (!next.length) return;
+
+          const [nextShapeState, ...rest] = next;
+
+          setHistory({
+            prev: [...prev, shapesRef.current],
+            next: rest,
+          });
+
+          setShapes(nextShapeState);
+        };
+
         socket?.on('createShape', createShape);
         socket?.on('updateShape', updateShape);
+        socket?.on('undo', undo);
+        socket?.on('redo', redo);
 
         return () => {
           socket.off('createShape', createShape);
           socket.off('updateShape', updateShape);
+          socket.off('undo', undo);
+          socket.off('redo', redo);
         };
       }
     }, [socket, uuid]);
@@ -636,6 +683,8 @@ const WhiteboardProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       onTouchStart,
       onClickTap,
       onChangeStart,
+      socket,
+      uuid,
     };
 
     return (

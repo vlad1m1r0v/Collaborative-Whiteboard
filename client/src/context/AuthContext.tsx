@@ -31,7 +31,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const { isLoading, data: user } = useQuery<User>({
     queryKey: ['user'],
     queryFn: () => axiosInstance.get<User>('users/profile').then((res) => res.data),
-    staleTime: Infinity,
   });
 
   const handleLogout = () => {

@@ -50,9 +50,21 @@ export class WebsocketsGateway {
     @MessageBody() message: { shape: Shape; room: string },
   ) {
     this.logger.log(
-      `Client ${client.id} created updated shape ${message.shape.shapeType}`,
+      `Client ${client.id} updated shape ${message.shape.shapeType}`,
     );
     client.broadcast.to(message.room).emit('updateShape', message.shape);
+  }
+
+  @SubscribeMessage('undo')
+  handleUndo(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
+    this.logger.log(`Client ${client.id} clicked undo`);
+    client.broadcast.to(room).emit('undo');
+  }
+
+  @SubscribeMessage('redo')
+  handleRedo(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
+    this.logger.log(`Client ${client.id} clicked redo`);
+    client.broadcast.to(room).emit('redo');
   }
 
   @SubscribeMessage('leaveRoom')
